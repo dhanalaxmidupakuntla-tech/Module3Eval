@@ -1,5 +1,5 @@
-export const getData = () => 
-    JSON.parse(localStorage.getItem("data")) || [];
+export const getData = () =>
+  JSON.parse(localStorage.getItem("evalData")) || [];
 
-export const saveData = (data) => 
-    localStorage.setItem("data", JSON.stringify(data));
+export const saveData = (data) =>
+  localStorage.setItem("evalData", JSON.stringify(data));

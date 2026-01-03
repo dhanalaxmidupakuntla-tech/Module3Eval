@@ -1,39 +1,47 @@
 import { useEffect, useState } from "react";
 import { getData, saveData } from "../utils/localStorage";
-import AddRestaurentForm from "../components/AddRestaurentForm";
-import RestaurentCard from "../components/RestaurentCard";
+import AddRestaurantForm from "../components/AddRestaurantForm";
+import RestaurantCard from "../components/RestaurantCard";
+import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
-    const [data, setData] = useState([]);
-    const navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [type, setType] = useState("");
+  const [parking, setParking] = useState("");
+  const navigate = useNavigate();
 
-    const load = () => setData(getData());
+  const load = () => setData(getData());
+  useEffect(load, []);
 
-    useEffect(load, []);
+  const filtered = data
+    .filter(r => r.restaurantName.toLowerCase().includes(search.toLowerCase()) || r.address.toLowerCase().includes(search.toLowerCase()))
+    .filter(r => (type ? r.type === type : true))
+    .filter(r => (parking ? r.parkingLot === (parking === "true") : true));
 
-    const handleDelete = (id) => {
-        if (!confirm("Are you sure?")) return;
-        const updated = data.fliter(r => r.restaurentID !== id);
-        saveData(updated);
-        alert("Deleted Successfully");
-        load();
-    }
+  const handleDelete = (id) => {
+    if (!confirm("Are you sure?")) return;
+    saveData(data.filter(r => r.restaurantID !== id));
+    alert("Deleted");
+    load();
+  };
 
-    return (
-        <div>
-            <AddRestaurentForm refresh = {load} />
-            {data.map(r => (
-                <RestaurentCard
-                    key = {r.restaurentID}
-                    data = {r}
-                    isAdmin 
-                    onDelete = {handleDelete}
-                    onUpdate = {() => navigate("/admin/restaurents/update", {state: r})}
-                />
-            ))}
-        </div>
-    )
-}
+  return (
+    <>
+      <Navbar {...{ search, setSearch, type, setType, parking, setParking }} />
+      <AddRestaurantForm refresh={load} />
+      {filtered.map(r => (
+        <RestaurantCard
+          key={r.restaurantID}
+          data={r}
+          isAdmin
+          onDelete={handleDelete}
+          onUpdate={() => navigate("/admin/restaurants/update", { state: r })}
+        />
+      ))}
+    </>
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;
