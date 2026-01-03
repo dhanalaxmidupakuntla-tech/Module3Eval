@@ -27,7 +27,6 @@ const AddReastaurentForm = () => {
 
         saveData([...data, newItem]);
         alert("Restaurent Added");
-        refresh();
         setForm({
             ...form,
             "restaurantName": "",
